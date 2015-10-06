@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -36,5 +36,6 @@ public class TextProxy {
 	final public static TextModel sql_tables = new TextModel(TextTypes.SQL_TABLES, 1024);
 	final public static TextModel city = new TextModel(TextTypes.CITY, 1024);
 	final public static TextModel maria = new TextModel(TextTypes.MARIA, 1024);
+	final public static TextModel web = new TextModel(TextTypes.WEB, 500);
 
 }

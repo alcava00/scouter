@@ -1,5 +1,5 @@
 /*
-*  Copyright 2015 LG CNS.
+*  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ class HeapDumpService {
 
         val o = AgentManager.getAgent(objHash);
 
-        AgentCall.call(o, RequestCmd.OBJECT_DOWNLOAD_HEAP_DUMP, param, (inx: DataInputX, out: DataOutputX) =>
+        AgentCall.call(o, RequestCmd.OBJECT_DOWNLOAD_HEAP_DUMP, param, (proto: Int, inx: DataInputX, out: DataOutputX) =>
             while (inx.readByte() == TcpFlag.HasNEXT) {
                 dout.writeByte(TcpFlag.HasNEXT)
                 val buff = inx.readBlob()

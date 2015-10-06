@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
  */
 package scouter.client.stack.views;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -30,6 +32,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -56,6 +59,7 @@ public class StackAnalyzerView extends ViewPart {
 	private Browser m_browser = null;
 
 	public void createPartControl(Composite parent) {
+		this.setPartName("SFA");
 		MainProcessor mainProcessor = MainProcessor.instance();
 		mainProcessor.setStackAnalyzerView(this);
 		mainProcessor.setParentComposite(parent);
@@ -102,7 +106,7 @@ public class StackAnalyzerView extends ViewPart {
 				
 				if(item == null)
 					return;
-					
+				
                 Object object = item.getData();
                 MainProcessor mainProcessor = MainProcessor.instance();
                 if ( object instanceof StackAnalyzedInfo ) {
@@ -131,6 +135,24 @@ public class StackAnalyzerView extends ViewPart {
 		tableColumn = new TableColumn(m_table, SWT.LEFT);
 		tableColumn.setText("Class.Method");
 		tableColumn.setWidth(600);
+
+		m_table.addSelectionListener(new SelectionListener(){
+			public void widgetDefaultSelected(SelectionEvent event) {
+			}
+			@SuppressWarnings("unchecked")
+			public void widgetSelected(SelectionEvent event) {
+				TableItem item = (TableItem)event.item;
+				
+				if(item == null)
+					return;
+				
+				Object object = item.getData();
+				if(object == null){
+					return;
+				}
+                MainProcessor.instance().displayContent(HtmlUtils.getUniqueStack((ArrayList<String>)object));
+            }			
+		});
 		
 		m_table.setHeaderVisible(true);
 		m_table.setVisible(true);
@@ -154,6 +176,13 @@ public class StackAnalyzerView extends ViewPart {
 				new MainProcessorAction("Open Stack Log").run();
 			}
 		});
+
+		man.add(new Action("open analyzed stack log", ImageUtil.getImageDescriptor(Images.folder_star)) {
+			public void run() {
+				new MainProcessorAction("Open Analyzed Stack Log").run();
+			}
+		});
+		
 		man.add(new Action("close all stack log", ImageUtil.getImageDescriptor(Images.close_folder)) {
 			public void run() {
 				new MainProcessorAction("Close All").run();
@@ -166,7 +195,7 @@ public class StackAnalyzerView extends ViewPart {
 			}
 		});
 		
-		man.add(new OpenXMLEditorAction(win, "edit parser configuration", ImageUtil.getImageDescriptor(Images.config_edit)));
+		man.add(new OpenXMLEditorAction(win, "Edit parser configuration", ImageUtil.getImageDescriptor(Images.config_edit)));
 	}
 	
 	private void createMainTreePopupMenu(){

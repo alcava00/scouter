@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class Configure extends Thread {
 	public String scouter_name = "";
 	public String objhost_type = "";
 	public String objhost_name = "";
-	
+
 	public int objHash;
 	public String objName;
 	public int objHostHash;
@@ -87,7 +87,6 @@ public class Configure extends Thread {
 	public boolean enable_plus_objtype = false;
 
 	public boolean enable_asm_jdbc = true;
-	public boolean enable_asm_httpsession = true;
 	public boolean enable_asm_socket = true;
 
 	public boolean http_debug_querystring;
@@ -105,9 +104,10 @@ public class Configure extends Thread {
 	public boolean profile_thread_cputime = false;
 	public boolean profile_socket_openstack = false;
 	public int profile_socket_openstack_port = 0;
-	
+	public boolean profile_framework_sqlmap = true;
+
 	public boolean listup_background_socket = true;
-	
+
 	public int xlog_time_limit = 0;
 
 	public String http_error_status = "";
@@ -145,7 +145,8 @@ public class Configure extends Thread {
 
 	public String plugin_classpath = "";
 
-	public StringSet log_ignore = new StringSet();
+	public String log_ignore = "";
+	public StringSet log_ignore_set = new StringSet();
 
 	public String hook_args = "";
 	public String hook_return = "";
@@ -174,6 +175,10 @@ public class Configure extends Thread {
 	public String hook_apicall_info = "";
 	public String hook_jsp = "";
 
+	public String hook_jdbc_pstmt = "";
+	public String hook_jdbc_stmt = "";
+	public String hook_jdbc_rs = "";
+
 	// /LOAD CONTROL/////
 	public boolean enable_reject_service = false;
 	public int max_active_service = 10000;
@@ -187,9 +192,12 @@ public class Configure extends Thread {
 
 	public String plugin_http_trace = "";
 	public String plugin_apicall_name = "";
-	public String plugin_http_trace_param = "";
+
 	public boolean profile_fullstack_service_error = false;
 	public boolean profile_fullstack_apicall_error = false;
+	public boolean profile_fullstack_sql_error = false;
+	public boolean profile_fullstack_sql_commit = false;
+
 	public int profile_fullstack_lines = 0;
 	public long udp_collection_interval = 100;
 	public boolean profile_sql_escape = true;
@@ -201,15 +209,12 @@ public class Configure extends Thread {
 	public String this_txid = "scouter_this_txid";
 	public String caller_txid = "scouter_caller_txid";
 
-	public int hook_signature;
+	private int hook_signature;
 
-	public int max_concurrent_server_request = 10;
 	public String userid_jsessionid = "JSESSIONID";
 
 	public boolean enable_auto_service_trace = false;
 	public boolean enable_auto_service_backstack = true;
-
-	public boolean debug_apicall = false;
 
 	public String hook_future_task = "";
 	public String hook_future_task_prefix = "";
@@ -224,19 +229,18 @@ public class Configure extends Thread {
 	public boolean enable_hook_step7 = true;
 	public boolean enable_hook_step8 = true;
 
-	public int stat_sql_max = 10000;
-	public int stat_api_max = 5000;
-	public int stat_app_sql_max = 10000;
-	public int stat_app_api_max = 5000;
-
 	public String direct_patch_class = "";
 
 	public long max_think_time = DateUtil.MILLIS_PER_FIVE_MINUTE;
-	public String object_registry="/tmp/scouter";
-	
-	public boolean pstack_enabled=false;
-	public int pstack_interval=10000;
-	
+	public String object_registry = "/tmp/scouter";
+
+	public boolean sfa_dump_enabled = false;
+	public int sfa_dump_interval = 10000;
+
+	public boolean enable_trace_web = false;
+	public String key_web_name = "X-Forwarded-Host";
+	public String key_web_time = "X-Forwarded-Time";
+
 	/**
 	 * sometimes call by sample application, at that time normally set some
 	 * properties directly
@@ -286,8 +290,6 @@ public class Configure extends Thread {
 	}
 
 	long last_check = 0;
-
-
 
 	public synchronized boolean reload(boolean force) {
 		long now = System.currentTimeMillis();
@@ -366,9 +368,9 @@ public class Configure extends Thread {
 		this.listup_background_socket = getBoolean("listup_background_socket", true);
 		this.profile_socket_openstack_port = getInt("profile_socket_openstack_port", 0);
 		this.profile_sql_escape = getBoolean("profile_sql_escape", true);
+		this.profile_framework_sqlmap = getBoolean("profile_framework_sqlmap", true);
 
 		this.enable_asm_jdbc = getBoolean("enable_asm_jdbc", getBoolean("enable.asm.jdbc", true));
-		this.enable_asm_httpsession = getBoolean("enable_asm_httpsession", getBoolean("enable.asm.httpsession", true));
 		this.enable_asm_socket = getBoolean("enable_asm_socket", getBoolean("enable.asm.socket", true));
 
 		this.udp_packet_max = getInt("udp_packet_max", getInt("udp.packet.max", 60000));
@@ -376,13 +378,14 @@ public class Configure extends Thread {
 		this.yellow_line_time = getLong("yellow_line_time", getLong("yellow.line.time", 3000));
 		this.red_line_time = getLong("red_line_time", getLong("red.line.time", 8000));
 
-		this.log_ignore = getStringSet("log_ignore", ",");
+		this.log_ignore = getValue("log_ignore", "");
+		this.log_ignore_set = getStringSet("log_ignore", ",");
 
 		this.debug_udp_xlog = getBoolean("debug_udp_xlog", getBoolean("debug.udp.xlog", false));
 		this.debug_udp_object = getBoolean("debug_udp_object", getBoolean("debug.udp.object", false));
 
 		this.local_udp_addr = getValue("local_udp_addr");
-		this.local_udp_port = getInt("local_udp_port",0);
+		this.local_udp_port = getInt("local_udp_port", 0);
 
 		this.server_addr = getValue("server_addr", getValue("server.addr", "127.0.0.1"));
 		this.server_udp_port = getInt("server_udp_port", getInt("server.port", NetConstants.SERVER_UDP_PORT));
@@ -414,10 +417,14 @@ public class Configure extends Thread {
 		this._hook_method_ignore_classes = new StringSet(StringUtil.tokenizer(
 				this.hook_method_ignore_classes.replace('.', '/'), ","));
 
-		this.hook_service = getValue("hook_service", getValue("hook.service", ""));
-		this.hook_apicall = getValue("hook_apicall", getValue("hook.subcall", ""));
+		this.hook_service = getValue("hook_service", "");
+		this.hook_apicall = getValue("hook_apicall", "");
 		this.hook_apicall_info = getValue("hook_apicall_info", "");
-		this.hook_jsp = getValue("hook_jsp", getValue("hook.jsp", ""));
+		this.hook_jsp = getValue("hook_jsp", "");
+
+		this.hook_jdbc_pstmt = getValue("hook_jdbc_pstmt", "");
+		this.hook_jdbc_stmt = getValue("hook_jdbc_stmt", "");
+		this.hook_jdbc_rs = getValue("hook_jdbc_rs", "");
 
 		this.hook_signature ^= this.hook_args.hashCode();
 		this.hook_signature ^= this.hook_return.hashCode();
@@ -447,6 +454,8 @@ public class Configure extends Thread {
 
 		this.profile_fullstack_service_error = getBoolean("profile_fullstack_service_error", false);
 		this.profile_fullstack_apicall_error = getBoolean("profile_fullstack_apicall_error", false);
+		this.profile_fullstack_sql_error = getBoolean("profile_fullstack_sql_error", false);
+		this.profile_fullstack_sql_commit = getBoolean("profile_fullstack_sql_commit", false);
 		this.profile_fullstack_lines = getInt("profile_fullstack_lines", 0);
 
 		this.udp_collection_interval = getInt("udp_collection_interval", 100);
@@ -455,13 +464,12 @@ public class Configure extends Thread {
 
 		this.http_remote_ip_header_key = getValue("http_remote_ip_header_key", "");
 
-		this.enable_trace_e2e = getBoolean("enable_trace_e2e", getBoolean("enable_gxid", false));
+		this.enable_trace_e2e = getBoolean("enable_trace_e2e", false);
 		this.enable_response_gxid = getBoolean("enable_response_gxid", false);
 		this.gxid = getValue("gxid", "scouter_gxid");
 		this.this_txid = getValue("this_txid", "scouter_this_txid");
 		this.caller_txid = getValue("caller_txid", "scouter_caller_txid");
 
-		this.max_concurrent_server_request = getInt("max_concurrent_server_request", 10);
 		this.debug_dbopen_fullstack = getBoolean("debug_dbopen_fullstack", false);
 		this.debug_dbopen_autocommit = getBoolean("debug_dbopen_autocommit", false);
 
@@ -472,8 +480,6 @@ public class Configure extends Thread {
 		this.enable_host_agent = getBoolean("enable_host_agent", false);
 		this.enable_auto_service_trace = getBoolean("enable_auto_service_trace", false);
 		this.enable_auto_service_backstack = getBoolean("enable_auto_service_backstack", true);
-
-		this.debug_apicall = getBoolean("debug_apicall", false);
 
 		this.hook_future_task = getValue("hook_future_task", "");
 		this.hook_future_task_prefix = getValue("hook_future_task_prefix", "");
@@ -488,20 +494,19 @@ public class Configure extends Thread {
 		this.enable_hook_step7 = getBoolean("enable_hook_step7", true);
 		this.enable_hook_step8 = getBoolean("enable_hook_step8", true);
 
-		this.stat_sql_max = getInt("stat_sql_max", 10000);
-		this.stat_api_max = getInt("stat_api_max", 5000);
-		this.stat_app_sql_max = getInt("stat_app_sql_max", 10000);
-		this.stat_app_api_max = getInt("stat_app_api_max", 5000);
-
-		this.plugin_http_trace_param = getValue("plugin_http_trace_param", "");
-
 		this.direct_patch_class = getValue("direct_patch_class", "");
 		this.max_think_time = getLong("max_think_time", DateUtil.MILLIS_PER_FIVE_MINUTE);
-		
+
 		this.object_registry = getValue("object_registry", "/tmp/scouter");
-		
-		this.pstack_enabled = getBoolean("pstack_enabled", false);;
-		this.pstack_interval = getInt("pstack_interval", 10000);
+
+		this.sfa_dump_enabled = getBoolean("sfa_dump_enabled", false);
+		this.sfa_dump_interval = getInt("sfa_dump_interval", 10000);
+
+		// 웹시스템으로 부터 WAS 사이의 성능과 어떤 웹서버가 요청을 보내 왔는지를 추적하는 기능을 ON/OFF하고
+		// 관련 키정보를 지정한다.
+		this.enable_trace_web = getBoolean("enable_trace_web", false);
+		this.key_web_name = getValue("key_web_name", "X-Forwarded-Host");
+		this.key_web_time = getValue("key_web_time", "X-Forwarded-Time");
 
 		resetObjInfo();
 		setErrorStatus();
@@ -586,9 +591,9 @@ public class Configure extends Thread {
 		this.objName = objHostName + "/" + this.scouter_name;
 		this.objHash = HashUtil.hash(objName);
 
-		this.alert_message_length = getInt("alert_message_length",  3000);
+		this.alert_message_length = getInt("alert_message_length", 3000);
 		this.alert_send_interval = getInt("alert_send_interval", 3000);
-		this.alert_fetch_count = getInt("alert_fetch_count",100000);
+		this.alert_fetch_count = getInt("alert_fetch_count", 100000);
 		this.alert_sql_time = getInt("alert_sql_time", 30000);
 
 		this.debug_asm = getBoolean("debug_asm", getBoolean("debug.asm", false));
@@ -727,6 +732,10 @@ public class Configure extends Thread {
 		}
 
 		return m;
+	}
+
+	public int getHookSignature() {
+		return this.hook_signature;
 	}
 
 	public static void main(String[] args) {

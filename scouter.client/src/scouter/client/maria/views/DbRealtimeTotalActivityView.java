@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import scouter.client.Images;
+import scouter.client.listeners.RangeMouseListener;
 import scouter.client.maria.actions.OpenDigestTableAction;
 import scouter.client.model.AgentModelThread;
 import scouter.client.model.RefreshThread;
@@ -135,6 +136,8 @@ public static final String ID = DbRealtimeTotalActivityView.class.getName();
 		
 		xyGraph.primaryXAxis.setTitle("");
 		xyGraph.primaryYAxis.setTitle("");
+		
+		xyGraph.primaryYAxis.addMouseListener(new RangeMouseListener(getViewSite().getShell(), xyGraph.primaryYAxis));
 		
 		CircularBufferDataProvider callProvider = new CircularBufferDataProvider(true);
 		callProvider.setBufferSize(BUFFER_SIZE);

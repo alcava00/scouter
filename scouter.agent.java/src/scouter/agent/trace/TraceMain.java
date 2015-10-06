@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -294,6 +294,10 @@ public class TraceMain {
 			if (ctx.desc != null) {
 				pack.desc = DataProxy.sendDesc(ctx.desc);
 			}
+		    if(ctx.web_name!=null){
+		    	pack.webHash = DataProxy.sendWebName(ctx.web_name);
+		    	pack.webTime = ctx.web_time;
+		    }
 			metering(pack);
 			HttpServiceTracePlugIn.end(ctx, pack);
 			if (sendOk) {

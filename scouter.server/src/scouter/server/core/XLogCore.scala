@@ -1,5 +1,5 @@
 /*
-*  Copyright 2015 LG CNS.
+*  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 
 package scouter.server.core;
 
+import scouter.io.DataOutputX
 import scouter.lang.pack.XLogPack
 import scouter.lang.pack.XLogTypes
-import scouter.io.DataOutputX
 import scouter.server.Configure
 import scouter.server.Logger
 import scouter.server.core.app.XLogGroupPerf
@@ -49,25 +49,26 @@ object ServiceCore {
     }
     ThreadScala.startDaemon("scouter.server.core.XLogCore", { CoreRun.running }) {
         val m = queue.get();
-
-        m.xType match {
-            case XLogTypes.WEB_SERVICE =>
-                VisitorCore.add(m)
-                calc(m)
-            case XLogTypes.APP_SERVICE =>
-                calc(m)
-            case _ => //기타 타입은 무시한다.
+        
+        if (Configure.WORKABLE) {
+	        m.xType match {
+	            case XLogTypes.WEB_SERVICE =>
+	                VisitorCore.add(m)
+	                calc(m)
+	            case XLogTypes.APP_SERVICE =>
+	                calc(m)
+	            case _ => //기타 타입은 무시한다.
+	        }
+	
+	        plugin.add(m);
+	
+	        val b = new DataOutputX().writePack(m).toByteArray();
+	        XLogCache.put(m.objHash, m.elapsed, m.error != 0, b);
+	        if (conf.tagcnt_enabled) {
+	            XLogTagCount.add(m)
+	        }
+	        XLogWR.add(m.endTime, m.txid, m.gxid, m.elapsed, b);
         }
-
-        plugin.add(m);
-
-        val b = new DataOutputX().writePack(m).toByteArray();
-        XLogCache.put(m.objHash, m.elapsed, m.error != 0, b);
-        if (conf.tagcnt_enabled) {
-            XLogTagCount.add(m)
-        }
-        XLogWR.add(m.endTime, m.txid, m.gxid, m.elapsed, b);
-
     }
 
     def add(p: XLogPack) {

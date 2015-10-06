@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import scouter.org.objectweb.asm.MethodVisitor;
 import scouter.org.objectweb.asm.Opcodes;
 import scouter.org.objectweb.asm.Type;
 import scouter.org.objectweb.asm.commons.LocalVariablesSorter;
-
 
 
 public class CapReturnASM implements IASM, Opcodes {
@@ -122,7 +121,7 @@ class CapReturnMV extends LocalVariablesSorter implements Opcodes {
 			AsmUtil.PUSH(mv, methodName);
 			AsmUtil.PUSH(mv, methodDesc);
 			mv.visitInsn(ACONST_NULL);
-			mv.visitMethodInsn(Opcodes.INVOKESTATIC, CLASS, METHOD, SIGNATURE);
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, CLASS, METHOD, SIGNATURE,false);
 			return;
 		}
 		int i = newLocal(tp);

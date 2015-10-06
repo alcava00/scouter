@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import scouter.client.Images;
+import scouter.client.listeners.RangeMouseListener;
 import scouter.client.model.AgentColorManager;
 import scouter.client.model.RefreshThread;
 import scouter.client.model.RefreshThread.Refreshable;
@@ -319,6 +320,8 @@ public class CounterRealTimeView extends ScouterViewPart implements Refreshable 
 
 		xyGraph.primaryXAxis.setTitle("");
 		xyGraph.primaryYAxis.setTitle("");
+		
+		xyGraph.primaryYAxis.addMouseListener(new RangeMouseListener(getViewSite().getShell(), xyGraph.primaryYAxis));
 
 		restoreState();
 		

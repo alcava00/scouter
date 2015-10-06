@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 
 import scouter.client.util.UIUtil;
+import scouter.net.NetConstants;
 import scouter.util.StringUtil;
 
 public class AddServerAddressDialog {
@@ -80,7 +81,7 @@ public class AddServerAddressDialog {
 	    newAddressLbl.setLayoutData(UIUtil.formData(0, 5, 0, 5, null, -1, null, -1));
 	    
 	    final ToolTip formatTip = new ToolTip(dialog, SWT.BALLOON);
-	    formatTip.setMessage("IP:Port ex) 127.0.0.1:6200");
+	    formatTip.setMessage("IP:Port ex) 127.0.0.1:" + NetConstants.SERVER_TCP_PORT);
 	    
 	    final ToolTip existTip = new ToolTip(dialog, SWT.BALLOON);
         existTip.setMessage("Server Address is already exist!");

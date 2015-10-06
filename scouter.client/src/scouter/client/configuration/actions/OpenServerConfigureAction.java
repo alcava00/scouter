@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 
-import scouter.client.configuration.views.ConfigureServerView;
+import scouter.client.configuration.views.ConfigureView;
 import scouter.client.util.ImageUtil;
 
 public class OpenServerConfigureAction extends Action {
@@ -44,9 +44,10 @@ public class OpenServerConfigureAction extends Action {
 	public void run() {
 		if (window != null) {
 			try {
-				ConfigureServerView v = (ConfigureServerView) window.getActivePage().showView(ConfigureServerView.ID, "*", IWorkbenchPage.VIEW_ACTIVATE);
-				if(v!= null)
+				ConfigureView v = (ConfigureView) window.getActivePage().showView(ConfigureView.ID, "" + serverId, IWorkbenchPage.VIEW_ACTIVATE);
+				if(v!= null) {
 					v.setInput(serverId);
+				}
 			} catch (PartInitException e) {
 				MessageDialog.openError(window.getShell(), "Error", "Error opening view:" + e.getMessage());
 			}

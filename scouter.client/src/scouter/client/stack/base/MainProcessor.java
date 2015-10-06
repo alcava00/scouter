@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import scouter.client.stack.data.StackAnalyzedValue;
 import scouter.client.stack.data.StackAnalyzedValueComp;
 import scouter.client.stack.data.StackFileInfo;
 import scouter.client.stack.data.StackParser;
+import scouter.client.stack.data.UniqueStackValue;
 import scouter.client.stack.utils.HtmlUtils;
 import scouter.client.stack.utils.ResourceUtils;
 import scouter.client.stack.utils.StringUtils;
@@ -142,7 +143,7 @@ public class MainProcessor{
         //    openFiles(new File[] { new File(menuName) }, true);
         } else if ( "Open Stack Log".equals(menuName) ) {  	
             chooseStackFile();
-        } else if ( "Open Analyzed Stack".equals(menuName) ) {
+        } else if ( "Open Analyzed Stack Log".equals(menuName) ) {
             openAnalyzedInfo();
         } else if ( "Close All".equals(menuName) ) {
             closeStackAllFileInfo();
@@ -211,7 +212,7 @@ public class MainProcessor{
 			messageBox.setText("Check Setting selection");
 			messageBox.setMessage("The configuration file is not selected.\r\nDo you want to use the default configuration?");
 			int result = messageBox.open();
-    	   if(result == SWT.YES){
+			if(result == SWT.YES){
 				configFile = XMLReader.DEFAULT_XMLCONFIG;
 			}else{
 			        configFile = selectCurrentParserConfig();
@@ -391,6 +392,9 @@ public class MainProcessor{
     	for(StackAnalyzedValue value : list){
     		item = new TableItem(table, SWT.BORDER);
     		item.setText(value.toTableInfo());
+    		if(value instanceof UniqueStackValue){
+    			item.setData(((UniqueStackValue)value).getStack());
+    		}
     	} 	
     }
     
@@ -480,11 +484,14 @@ public class MainProcessor{
         	return;
         }
         StackAnalyzedInfo analyzedInfo = (StackAnalyzedInfo)object;
+        if(analyzedInfo.getExtension().equals(StackParser.UNIQUE_EXT)){
+        	return;
+        }
+        
     	StackFileInfo stackFileInfo = analyzedInfo.getStackFileInfo();
     	
     	System.out.println("StackFile:"+ stackFileInfo.toString());        	
     	System.out.println("File:"+ analyzedInfo.toString());
-    	
     	
         String analyzedFilename = StackParser.getAnaylzedFilename(stackFileInfo.getFilename(), analyzedInfo.getExtension());
         File file = new File(analyzedFilename);
@@ -705,7 +712,7 @@ public class MainProcessor{
         clearTable();
     }
     
-    private void openStackAnalyzer(){
+    public void openStackAnalyzer(){
     	IWorkbench workbench = PlatformUI.getWorkbench();
     	IWorkbenchWindow window = workbench.getActiveWorkbenchWindow(); 
     	try{ 

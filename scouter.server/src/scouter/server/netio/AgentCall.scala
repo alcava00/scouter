@@ -1,5 +1,5 @@
 /*
-  Copyright 2015 LG CNS.
+  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -65,12 +65,13 @@ object AgentCall {
         return null;
     }
 
-    def call(o: ObjectPack, cmd: String, param: MapPack, handler: (DataInputX, DataOutputX) => Unit) {
+    def call(o: ObjectPack, cmd: String, param: MapPack, handler: (Int, DataInputX, DataOutputX) => Unit) {
         if (o == null)
             return ;
         val tcpAgent = TcpAgentManager.get(o.objHash);
         if (tcpAgent != null) {
             try {
+            	RequestLogger.getInstance().registerCmd(cmd);
                 tcpAgent.write(cmd, if (param != null) param else new MapPack())
                 tcpAgent.read(handler)
             } finally {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -65,6 +65,10 @@ public class DataInputX {
 		this.inner = in;
 	}
 
+	public byte[] readIntBytes() throws IOException {
+		int len = readInt();
+		return read(len);
+	}
 	public byte[] read(int len) throws IOException {
 		offset += len;
 		byte[] buff = new byte[len];

@@ -55,7 +55,7 @@
           class="scouter.client.PerspectiveStackAnalyzer"
           icon="icons/page_white_stack.png"
           id="scouter.client.PerspectiveStackAnalyzer"
-          name="Stack Performance Analyzer">
+          name="Stack Frequency Analyzer">
     </perspective>
   </extension>
 
@@ -298,20 +298,12 @@
       </view>
       <view
             allowMultiple="true"
-            class="scouter.client.configuration.views.ConfigureServerView"
-            id="scouter.client.configuration.views.ConfigureServerView"
+            class="scouter.client.configuration.views.ConfigureView"
+            id="scouter.client.configuration.views.ConfigureView"
             icon="icons/config.png"
-            name="Config Server"
+            name="Configure View"
             restorable="false">
       </view>
-      <view
-            allowMultiple="true"
-            class="scouter.client.configuration.views.ConfigureAgentView"
-            id="scouter.client.configuration.views.ConfigureAgentView"
-            icon="icons/config.png"
-            name="Config Agent"
-            restorable="false">
-      </view>      
       <view
             allowMultiple="true"
             class="scouter.client.counter.views.CounterLoadCountView"
@@ -835,7 +827,7 @@
             class="scouter.client.views.DigitalCountView"
             icon="icons/monitor.png"
             id="scouter.client.views.DigitalCountView"
-            name="DigitalCountView"
+            name="Visitors"
             restorable="false">
       </view>
       <view
@@ -930,6 +922,14 @@
             icon="icons/database_go.png"
             id="scouter.client.maria.views.DbDailyTotalConnView"
             name="DatabaseConnectionTotal"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="true"
+            class="scouter.client.counter.views.CounterRealTimeMultiView"
+            icon="icons/perf.png"
+            id="scouter.client.counter.views.CounterRealTimeMultiView"
+            name="RealTimeMultiCount"
             restorable="true">
       </view>
   </extension>

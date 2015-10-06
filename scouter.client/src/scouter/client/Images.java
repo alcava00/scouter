@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ public class Images {
 	public static final Image unknown = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 	
     public static final Image folder = Activator.getImage("icons/folder.png");
+    public static final Image folder_star = Activator.getImage("icons/folder_star.png");
 
     public static final Image refresh = Activator.getImage("icons/refresh.gif");
     public static final Image refresh_auto = Activator.getImage("icons/refresh_auto.png");
@@ -275,7 +276,9 @@ public class Images {
 		if(server == null)
 			return Images.unknown;
 		String imgName = server.getCounterEngine().getCounterIconFileName(objType, counter);
-		
+		if (StringUtil.isEmpty(imgName)) {
+			return ImageUtil.UNKNOWN;
+		}
 		Image image = objCntImgMap.get(imgName);
 		if(image!= null)
 			return image;
@@ -292,6 +295,9 @@ public class Images {
 			return null;
 		String imgName = server.getCounterEngine().getCounterIconFileName(objType, counter);
 		
+		if (StringUtil.isEmpty(imgName)) {
+			return ImageUtil.getImageDescriptor(ImageUtil.UNKNOWN);
+		}
 		ImageDescriptor image = objCntImgDescMap.get(imgName);
 		if(image!= null)
 			return image;

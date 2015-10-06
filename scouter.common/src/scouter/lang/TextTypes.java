@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -32,5 +32,6 @@ public interface TextTypes{
 	public static  String MARIA = "maria";
 	public static  String LOGIN = "login";
 	public static  String DESC = "desc";
+	public static  String WEB = "web";
 
 }

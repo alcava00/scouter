@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -70,11 +70,15 @@ public class DataOutputX {
 	public DataOutputX(RandomAccessFile out) {
 		this.inner = out;
 	}
+	public DataOutputX writeIntBytes(byte[] b) throws IOException {
+		this.writeInt(b.length);
+		this.write(b);
+		return this;
 
+	}
 	public DataOutputX writeShortBytes(byte[] b) throws IOException {
 		this.writeShort(b.length);
-		this.written += b.length;
-		this.inner.write(b);
+		this.write(b);
 		return this;
 
 	}

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import scouter.client.Images;
 import scouter.client.model.XLogData;
 import scouter.client.util.ExUtil;
 import scouter.client.util.ImageUtil;
+import scouter.client.xlog.XLogYAxisEnum;
 import scouter.util.DateUtil;
 import scouter.util.LongEnumer;
 import scouter.util.LongKeyLinkedMap;
@@ -64,8 +65,8 @@ public class XLogZoomTimeView extends XLogViewCommon {
 			}
 		});
 	}
-
-	public void setInput(long stime, long etime, double max, double min, LongKeyLinkedMap<XLogData> data, String objType) {
+	
+	public void setInput(long stime, long etime, double max, double min, LongKeyLinkedMap<XLogData> data, String objType, XLogYAxisEnum yAxisMode) {
 		twdata.clear();
 		this.objType = objType;
 		LongEnumer enumer = data.keys();
@@ -74,6 +75,7 @@ public class XLogZoomTimeView extends XLogViewCommon {
 			twdata.put(key, data.get(key));
 		}
 		setObjType(objType);
+		viewPainter.setYAxisMode(yAxisMode);
 		viewPainter.setEndTime(etime);
 		viewPainter.setTimeRange(etime - stime);
 		viewPainter.setValueRange(min, max);
@@ -83,6 +85,10 @@ public class XLogZoomTimeView extends XLogViewCommon {
 						+ "~" + DateUtil.format(etime, "HH:mm:ss") + ")");
 		setDate(DateUtil.yyyymmdd(stime));
 		refresh();
+	}
+
+	public void setInput(long stime, long etime, double max, double min, LongKeyLinkedMap<XLogData> data, String objType) {
+		setInput(stime, etime, max, min, data, objType, XLogYAxisEnum.ELAPSED);
 	}
 	
 	public void setFocus() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -66,12 +66,6 @@ public class ApiCallTracePlugin {
 		put(new ForJCOClient());
 		put(new ForRibbonLB());
 		put(new ForNettyHttpRequest());
-
-		// TODO:LF를 위해 임시로 추가해둠 나중에 Plugin으로 분리해야함
-		put("lgfs/frontoffice/sap/service/SapServiceImpl", new ForSAPTemp());
-		put("lgfs/woutlet/sap/service/SapServiceImpl", new ForSAPTemp());
-		put("lgfs/mfront/sap/service/SapServiceImpl", new ForSAPTemp());
-		put("lgfs/moutlet/sap/service/SapServiceImpl", new ForSAPTemp());
 	}
 
 	public static void reinit() {

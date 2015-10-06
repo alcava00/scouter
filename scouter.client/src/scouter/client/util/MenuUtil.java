@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -43,10 +43,10 @@ import scouter.client.actions.OpenEQViewAction;
 import scouter.client.actions.OpenServiceGroupAction;
 import scouter.client.actions.SetColorAction;
 import scouter.client.configuration.actions.DefineObjectTypeAction;
+import scouter.client.configuration.actions.OpenAgentConfigureAction;
 import scouter.client.constants.MenuStr;
 import scouter.client.context.actions.OpenAPIDebugViewAction;
 import scouter.client.context.actions.OpenCxtmenuActiveServiceListAction;
-import scouter.client.context.actions.OpenCxtmenuConfigureAgentViewAction;
 import scouter.client.context.actions.OpenCxtmenuDumpActiveServiceListAction;
 import scouter.client.context.actions.OpenCxtmenuDumpFileListAction;
 import scouter.client.context.actions.OpenCxtmenuDumpHeapHistoAction;
@@ -69,6 +69,7 @@ import scouter.client.counter.actions.OpenPastTimeAllAction;
 import scouter.client.counter.actions.OpenPastTimeTotalAction;
 import scouter.client.counter.actions.OpenPastTimeViewAction;
 import scouter.client.counter.actions.OpenRealTimeAllAction;
+import scouter.client.counter.actions.OpenRealTimeMultiAction;
 import scouter.client.counter.actions.OpenRealTimeTotalAction;
 import scouter.client.counter.actions.OpenRealTimeViewAction;
 import scouter.client.counter.actions.OpenTodayAllAction;
@@ -377,6 +378,12 @@ public class MenuUtil implements IMenuCreator{
     		performanceCounter.add(new OpenUniqueVisitorAction(win, serverId, objHash));
     	} else if (counterEngine.isChildOf(objType, CounterConstants.FAMILY_MARIA)) {
     		performanceCounter.add(new Separator());
+    		performanceCounter.add(new OpenRealTimeMultiAction(win, "Opened Tables", serverId, objHash, objType
+    				, new String[] {"OT_DEF", "OT_COUNT"}));
+    		performanceCounter.add(new OpenRealTimeMultiAction(win, "Temporary Tables", serverId, objHash, objType
+    				, new String[] {"DTEMP_TBL", "MTEMP_TBL"}));
+    		performanceCounter.add(new OpenRealTimeMultiAction(win, "Table Locks", serverId, objHash, objType
+    				, new String[] {"TBL_LOCK", "TBL_LOCK_W"}));
     		performanceCounter.add(new OpenDbRealtimeWaitCountAction(serverId, objHash));
     	}
     	
@@ -424,7 +431,7 @@ public class MenuUtil implements IMenuCreator{
 				
 				if (server.isAllowAction(GroupPolicyConstants.ALLOW_CONFIGURE)) {
 					mgr.add(new Separator());
-					mgr.add(new OpenCxtmenuConfigureAgentViewAction(win, MenuStr.CONFIGURE, objHash, serverId));
+					mgr.add(new OpenAgentConfigureAction(win, MenuStr.CONFIGURE, objHash, serverId));
 				}
 			} else if (counterEngine.isChildOf(objType, CounterConstants.FAMILY_HOST)) {
 				performanceSnapshot.add(new OpenCxtmenuEnvAction(win, MenuStr.ENV, objHash, serverId));
@@ -433,7 +440,7 @@ public class MenuUtil implements IMenuCreator{
 				
 				mgr.add(new Separator());
 				if (server.isAllowAction(GroupPolicyConstants.ALLOW_CONFIGURE))
-					mgr.add(new OpenCxtmenuConfigureAgentViewAction(win, MenuStr.CONFIGURE, objHash, serverId));
+					mgr.add(new OpenAgentConfigureAction(win, MenuStr.CONFIGURE, objHash, serverId));
 			} 
     	}
     	if (server.isAllowAction(GroupPolicyConstants.ALLOW_DEFINEOBJTYPE)) {
@@ -510,7 +517,7 @@ public class MenuUtil implements IMenuCreator{
 					mgr.add(act);
 				}
 				if (counterObj.isTotal()) {
-					Action act = new OpenPastTimeTotalAction(win, "Daily Total", objType, counter, Images.total, -1, -1, serverId);
+					Action act = new OpenPastLongDateTotalAction(win, "Daily Total", objType, counter, Images.total, null, null, serverId);
 					if (CounterPastLongDateTotalView.ID.equals(id)) {
 						act.setEnabled(false);
 					}

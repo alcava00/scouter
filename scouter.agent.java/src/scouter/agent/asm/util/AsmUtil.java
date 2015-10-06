@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 LG CNS.
+ *  Copyright 2015 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  *  you may not use this file except in compliance with the License.
@@ -141,6 +141,7 @@ public class AsmUtil implements Opcodes {
 		}
 		return -1;
 	}
+	
 	
 	public static boolean isSpecial(String name) {
 		return name.indexOf("$") >= 0 || name.startsWith("<");
